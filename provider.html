@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Provider Workspace - Thozri</title>
+    <title>Provider Workspace - Aura</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --primary: #ec4899;
             --primary-dark: #db2777;
-            --bg-color: #f8fafc;
+            --accent: #6366f1;
+            --bg-color: #fcfcfd;
             --surface: #ffffff;
             --text-main: #0f172a;
             --text-muted: #64748b;
@@ -17,21 +19,49 @@
             --success: #10b981;
             --warning: #f59e0b;
             --info: #3b82f6;
+            --input-bg: #fcfcfc;
+            --hover-bg: #fdf2f8;
+            --job-hover: #ffffff;
+            --glass: rgba(255, 255, 255, 0.75);
+            --gradient-primary: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); display: flex; min-height: 100vh; overflow-x: hidden; }
         
+        body.dark-mode {
+            --bg-color: #020617;
+            --surface: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+            --input-bg: #020617;
+            --hover-bg: #1e1b4b;
+            --job-hover: #1e293b;
+            --glass: rgba(15, 23, 42, 0.75);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s; scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
         /* Sidebar */
         .sidebar {
             width: 260px; background: var(--surface); border-right: 1px solid var(--border);
-            padding: 30px 20px; display: flex; flex-direction: column; transition: transform 0.3s ease;
+            padding: 30px 20px; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: fixed; height: 100vh; z-index: 100;
+            backdrop-filter: blur(15px); background: var(--glass);
         }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
-        .logo-icon { width: 32px; height: 32px; background: var(--primary); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .sidebar::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--gradient-primary);
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 40px; display: flex; align-items: center; gap: 10px; letter-spacing: -1px; }
+        .logo-icon { width: 34px; height: 34px; background: var(--gradient-primary); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
         .nav-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
         .nav-link { padding: 12px 16px; border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: all 0.3s; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 500; }
-        .nav-link:hover, .nav-link.active { background: #fdf2f8; color: var(--primary); }
+        .nav-link:hover, .nav-link.active { background: var(--hover-bg); color: var(--primary); }
         
         /* Main Layout */
         .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; transition: margin 0.3s ease; width: calc(100% - 260px); }
@@ -75,19 +105,39 @@
         
         /* Job Leads */
         .job-list { display: flex; flex-direction: column; gap: 16px; }
-        .job-card { border: 1px solid var(--border); padding: 20px; border-radius: 12px; transition: all 0.3s; background: white; }
-        .job-card:hover { border-color: var(--primary); box-shadow: 0 8px 16px -4px rgba(236, 72, 153, 0.1); transform: translateY(-2px); }
+        .job-card { border: 1px solid var(--border); padding: 20px; border-radius: 12px; transition: all 0.3s; background: var(--surface); }
+        .job-card:hover { border-color: var(--primary); box-shadow: 0 8px 16px -4px rgba(236, 72, 153, 0.1); transform: translateY(-2px); background: var(--job-hover); }
         .job-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .job-title { font-weight: 600; color: var(--text-main); font-size: 1.1rem; }
         .job-price { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
         .job-details { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; }
         .job-actions { display: flex; gap: 10px; }
         
-        .btn { padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; border: none; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-outline:hover { background: #f1f5f9; }
+        .btn { background: var(--gradient-primary); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 12px -3px rgba(236, 72, 153, 0.3); position: relative; overflow: hidden; gap: 8px; }
+        .btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,0.2), transparent); opacity: 0; transition: 0.3s; }
+        .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 20px -5px rgba(236, 72, 153, 0.4); }
+        .btn:hover::after { opacity: 1; }
+        .btn:active { transform: translateY(0) scale(0.98); }
+        
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); box-shadow: none; font-weight: 700; height: 100%; padding: 14px 28px; border-radius: 12px; transition: all 0.3s; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-outline:hover { background: var(--hover-bg); border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+
+        /* Reveal Animation */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Animated Mesh Background */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(236, 72, 153, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.05) 0%, transparent 40%);
+            z-index: -1; pointer-events: none;
+            animation: pulseBg 10s infinite alternate ease-in-out;
+        }
+        @keyframes pulseBg {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.1); opacity: 0.8; }
+        }
 
         /* Document Upload (Mini Version) */
         .file-upload { border: 2px dashed var(--border); padding: 20px; text-align: center; border-radius: 12px; color: var(--text-muted); cursor: pointer; transition: all 0.3s; display: block; background: #fafafa; margin-bottom: 15px; }
@@ -96,7 +146,7 @@
         
         /* Toast Notification */
         .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: white; border-left: 4px solid var(--success); padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateX(120%); opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); min-width: 300px; }
+        .toast { background: var(--toast-bg); border-left: 4px solid var(--success); padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateX(120%); opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); min-width: 300px; }
         .toast.show { transform: translateX(0); opacity: 1; }
         .toast-icon { color: var(--success); font-size: 1.2rem; }
         .toast-content h4 { font-size: 0.95rem; color: var(--text-main); margin-bottom: 2px; }
@@ -113,29 +163,51 @@
             .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 95; }
             .sidebar-overlay.active { display: block; }
         }
+        
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .main-content {
+            animation: pageFadeIn 0.4s ease-out;
+        }
+        .theme-btn {
+            background: none; border: none; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: var(--text-main);
+        }
+        /* Theme Toggle */
+        .theme-btn {
+            background: var(--bg-color); border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .theme-btn:hover { background: var(--primary); color: white; transform: rotate(15deg); }
     </style>
 </head>
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="sidebar" id="sidebar">
-        <div class="logo"><div class="logo-icon">T</div> Thozri Pro</div>
+        <div class="logo">
+            <div class="logo-icon"><i data-lucide="sparkles"></i></div>
+            Aura Pro
+        </div>
         <ul class="nav-links">
-            <li><a href="#" class="nav-link active"><span>💼</span> Workspace</a></li>
-            <li><a href="#" class="nav-link"><span>📋</span> Jobs & Leads</a></li>
-            <li><a href="#" class="nav-link"><span>💰</span> Earnings</a></li>
-            <li><a href="#" class="nav-link"><span>📅</span> Schedule</a></li>
-            <li style="margin-top: auto;"><a href="index.html" class="nav-link" style="color: #ef4444;"><span>🚪</span> Logout</a></li>
+            <li><a href="#" class="nav-link active" data-view="workspace"><i data-lucide="layout-dashboard"></i> Workspace</a></li>
+            <li><a href="#" class="nav-link" data-view="jobs"><i data-lucide="clipboard-list"></i> Jobs & Leads</a></li>
+            <li><a href="#" class="nav-link" data-view="earnings"><i data-lucide="banknote"></i> Earnings</a></li>
+            <li><a href="#" class="nav-link" data-view="schedule"><i data-lucide="calendar"></i> Schedule</a></li>
+            <li><a href="#" class="nav-link" data-view="profile"><i data-lucide="user"></i> Profile</a></li>
+            <li style="margin-top: auto;"><a href="index.html" class="nav-link" style="color: #ef4444;"><i data-lucide="log-out"></i> Logout</a></li>
         </ul>
     </div>
     
     <div class="main-wrapper">
         <header class="topbar">
-            <div class="menu-toggle" id="menuToggle">☰</div>
+            <div class="menu-toggle" id="menuToggle"><i data-lucide="menu"></i></div>
             <div style="flex: 1;"></div>
             <div class="user-actions">
+                <button class="theme-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle Dark Mode"><i data-lucide="sun"></i></button>
                 <div class="notification-bell">
-                    🔔 <div class="notification-dot"></div>
+                    <i data-lucide="bell" style="width: 20px; height: 20px; cursor: pointer; color: var(--text-main);"></i>
+                    <div class="notification-dot"></div>
                 </div>
                 <div class="user-profile">
                     <div class="avatar">EP</div>
@@ -144,7 +216,7 @@
             </div>
         </header>
 
-        <div class="main-content">
+        <div class="main-content" id="workspaceView">
             <div class="page-header">
                 <h1>Provider Workspace</h1>
                 <p>Manage incoming job requests and your professional profile.</p>
@@ -153,21 +225,21 @@
             <!-- KPIs -->
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-icon bg-pink">💰</div>
+                    <div class="kpi-icon bg-pink"><i data-lucide="banknote"></i></div>
                     <div class="kpi-info">
                         <h4>Monthly Earnings</h4>
                         <p>$3,450.00</p>
                     </div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-icon bg-green">✓</div>
+                    <div class="kpi-icon bg-green"><i data-lucide="check-circle"></i></div>
                     <div class="kpi-info">
                         <h4>Jobs Completed</h4>
                         <p>42</p>
                     </div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-icon bg-yellow">⭐</div>
+                    <div class="kpi-icon bg-yellow"><i data-lucide="star"></i></div>
                     <div class="kpi-info">
                         <h4>Average Rating</h4>
                         <p>4.9 / 5.0</p>
@@ -227,18 +299,174 @@
                         <div style="background: #fffbeb; border: 1px solid #fcd34d; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
                             <h4 style="color: #b45309; font-size: 1rem; margin-bottom: 8px;">Missing Documents</h4>
                             <p style="font-size: 0.85rem; color: #92400e; margin-bottom: 15px;">Please upload your updated liability insurance certificate.</p>
-                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem; background: var(--text-main);">Upload Document</button>
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem; background: var(--text-main);" onclick="showToast('Upload Required', 'Opening document uploader...', false)">Upload Document</button>
                         </div>
                         
                         <h4 style="font-size: 1rem; margin-bottom: 12px; color: var(--text-main); font-weight: 600;">Portolio Quick Upload</h4>
                         <label class="file-upload">
-                            <div style="font-size: 24px; margin-bottom: 10px;">📸</div>
+                            <div style="font-size: 24px; margin-bottom: 10px; color: var(--primary);"><i data-lucide="camera"></i></div>
                             <div style="color: var(--text-main); font-weight: 500;">Drop images here</div>
-                            <div style="font-size: 0.8rem; margin-top: 5px;">Add past work to your profile</div>
+                            <div style="font-size: 0.8rem; margin-top: 5px; color: var(--text-muted);">Add past work to your profile</div>
                             <input type="file" multiple>
                         </label>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Jobs & Leads View -->
+        <div class="main-content" id="jobsView" style="display:none;">
+            <div class="page-header">
+                <h1>Jobs & Leads</h1>
+                <p>Manage your active jobs, past jobs, and new leads.</p>
+            </div>
+            <div class="card">
+                <div style="display:flex; gap:15px; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:20px;">
+                    <div style="font-weight:600; color:var(--primary); border-bottom:2px solid var(--primary); padding-bottom:15px; margin-bottom:-16px; cursor:pointer;">Active Jobs</div>
+                    <div style="font-weight:500; color:var(--text-muted); cursor:pointer;">Past Jobs</div>
+                </div>
+                <!-- Job List -->
+                <div class="job-list">
+                    <div class="job-card">
+                        <div class="job-header">
+                            <span class="job-title">Electrical Wiring Issue</span>
+                            <span class="job-price">$85</span>
+                        </div>
+                        <div class="job-details">
+                            <span>📍 1.2 miles away</span>
+                            <span style="color:var(--success);">Status: In Progress</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Customer states living room lights keep flickering. Needs a quick check and possible wiring fix.</p>
+                        <div class="job-actions">
+                            <button class="btn btn-primary" onclick="showToast('Job updated', 'Marked as completed!')">Mark Complete</button>
+                            <button class="btn btn-outline" onclick="showToast('Message sent', 'Customer notified.')">Message Customer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings View -->
+        <div class="main-content" id="earningsView" style="display:none;">
+            <div class="page-header">
+                <h1>Earnings & Payouts <i data-lucide="banknote"></i></h1>
+                <p>Track your income and manage your payout methods.</p>
+            </div>
+            <!-- Earnings KPIs -->
+            <div class="kpi-grid">
+                <div class="kpi-card" style="background:#ecfdf5; border-color:#a7f3d0;">
+                    <div class="kpi-icon bg-green"><i data-lucide="dollar-sign"></i></div>
+                    <div class="kpi-info">
+                        <h4>Available for Payout</h4>
+                        <p>$1,250.00</p>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background:#f1f5f9; color:var(--text-main);"><i data-lucide="trending-up"></i></div>
+                    <div class="kpi-info">
+                        <h4>Total Earned (YTD)</h4>
+                        <p>$14,800.00</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Recent Transactions</h3>
+                    <button class="btn btn-primary">Withdraw Funds</button>
+                </div>
+                <div class="job-list">
+                    <div class="job-card" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <span class="job-title">Payout to Bank Account (...1234)</span>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top:5px;">Oct 12, 2026</p>
+                        </div>
+                        <div style="font-weight:700; color:var(--text-main); font-size:1.1rem;">-$800.00</div>
+                    </div>
+                    <div class="job-card" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <span class="job-title">Payment: Full Home Deep Cleaning</span>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top:5px;">Oct 10, 2026</p>
+                        </div>
+                        <div style="font-weight:700; color:var(--success); font-size:1.1rem;">+$200.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule View -->
+        <div class="main-content" id="scheduleView" style="display:none;">
+            <div class="page-header">
+                <h1>Schedule <i data-lucide="calendar"></i></h1>
+                <p>View your upcoming appointments and set your availability.</p>
+            </div>
+            <div class="grid-layout">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Upcoming Appointments</h3>
+                    </div>
+                    <div class="job-list">
+                        <div class="job-card" style="border-left: 4px solid var(--primary);">
+                            <div class="job-header">
+                                <span class="job-title">A/C Servicing</span>
+                                <span style="font-size:0.9rem; font-weight:600; color:var(--primary);">Today, 2:00 PM</span>
+                            </div>
+                            <div class="job-details" style="margin-bottom:0;">
+                                <span>📍 John Doe (123 Main St)</span>
+                            </div>
+                        </div>
+                        <div class="job-card" style="border-left: 4px solid var(--primary);">
+                            <div class="job-header">
+                                <span class="job-title">Plumbing Repair</span>
+                                <span style="font-size:0.9rem; font-weight:600; color:var(--primary);">Tomorrow, 10:00 AM</span>
+                            </div>
+                            <div class="job-details" style="margin-bottom:0;">
+                                <span>📍 Alice Smith (456 Elm St)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Availability Settings</h3>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:15px;">
+                        <label style="display:flex; align-items:center; gap:10px;">
+                            <input type="checkbox" checked> Available for Emergency Jobs
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px;">
+                            <input type="checkbox" checked> Receive leads outside service area
+                        </label>
+                        <button class="btn btn-outline" style="margin-top:10px;" onclick="showToast('Success', 'Settings saved')">Save Preferences</button>
+                    </div>
+                </div>
+            </div>
+        <!-- Profile View -->
+        <div class="main-content" id="profileView" style="display:none;">
+            <div class="page-header reveal">
+                <h1>Profile Settings <i data-lucide="settings"></i></h1>
+                <p>Manage your professional profile and credentials.</p>
+            </div>
+            
+            <div class="card reveal" style="max-width:600px;">
+                <div style="display:flex; align-items:center; gap:20px; margin-bottom:30px;">
+                    <div class="avatar" style="width:80px; height:80px; font-size:2rem; background: var(--gradient-primary); color: white; border: none;">EP</div>
+                    <div>
+                        <button class="btn btn-outline" style="width:auto; padding:10px 20px; margin-bottom:5px;">Change Logo</button>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">PNG or JPG. Min 400x400px</div>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-main);">Business Name</label>
+                    <input type="text" class="form-control" value="Elite Plumbers" style="width:100%; padding:14px; border:2px solid var(--border); border-radius:12px; background:var(--input-bg); color:var(--text-main); font-size: 1rem; outline: none;">
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-main);">Professional Bio</label>
+                    <textarea class="form-control" rows="3" style="width:100%; padding:14px; border:2px solid var(--border); border-radius:12px; background:var(--input-bg); color:var(--text-main); font-size: 1rem; outline: none; resize:none;">Top-rated plumbing service in the tri-state area. Specialized in emergency repairs and full installs since 2015.</textarea>
+                </div>
+                
+                <button class="btn" onclick="showToast('Success', 'Profile updated successfully!')">Save Changes</button>
             </div>
         </div>
     </div>
@@ -247,6 +475,33 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
+        // Theme logic
+        const themeToggleBtn = document.getElementById('themeToggle');
+        function initTheme() {
+            const savedTheme = localStorage.getItem('aura-theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            updateThemeIcon();
+        }
+        initTheme();
+
+        function updateThemeIcon() {
+            const isDark = document.body.classList.contains('dark-mode');
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.innerHTML = isDark ? '<i data-lucide="moon"></i>' : '<i data-lucide="sun"></i>';
+                lucide.createIcons();
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('aura-theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        }
+
         // Sidebar Toggle
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
@@ -258,6 +513,37 @@
         }
         menuToggle.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
+
+        // Sidebar Navigation Logic
+        const navLinks = document.querySelectorAll('.nav-link[data-view]');
+        const views = {
+            'workspace': document.getElementById('workspaceView'),
+            'jobs': document.getElementById('jobsView'),
+            'earnings': document.getElementById('earningsView'),
+            'schedule': document.getElementById('scheduleView'),
+            'profile': document.getElementById('profileView')
+        };
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetView = link.dataset.view;
+                
+                // Update active link state
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Hide all views, show targeted
+                Object.values(views).forEach(v => { if(v) v.style.display = 'none'; });
+                if (views[targetView]) views[targetView].style.display = 'block';
+                
+                // Close mobile sidebar if open
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
 
         // Toast System
         function showToast(title, message, isSuccess = true) {
@@ -312,13 +598,23 @@
         function checkEmptyList() {
             const list = document.getElementById('jobList');
             if (list.children.length === 0) {
-                list.innerHTML = `<div style="text-align: center; padding: 50px 20px; color: var(--text-muted); background: #f8fafc; border-radius: 12px; border: 1px dashed var(--border);">
-                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🏖️</div>
+                list.innerHTML = `<div style="text-align: center; padding: 50px 20px; color: var(--text-muted); background: var(--bg-color); border-radius: 12px; border: 1px dashed var(--border); animation: fadeIn 0.5s ease-out;">
+                    <div style="font-size: 2.5rem; margin-bottom: 15px; color: var(--primary);"><i data-lucide="coffee" style="width: 48px; height: 48px; margin: 0 auto;"></i></div>
                     <h4 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 5px;">Inbox clear!</h4>
                     <p>No new leads available right now. We'll notify you when a match is found.</p>
                 </div>`;
+                lucide.createIcons();
             }
         }
+
+        // Reveal on scroll
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { entry.isIntersecting && entry.target.classList.add('active'); });
+        }, observerOptions);
+
+        function initReveal() { document.querySelectorAll('.reveal').forEach(el => observer.observe(el)); }
+        window.addEventListener('load', initReveal);
     </script>
 </body>
 </html>
