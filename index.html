@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thozri - Professional Home & Office Services</title>
+    <title>Aura - Professional Home & Office Services</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -16,6 +17,21 @@
             --text-muted: #64748b;
             --border: #e2e8f0;
             --ring: rgba(79, 70, 229, 0.2);
+            --input-bg: #fcfcfc;
+            --role-active-bg: #ffffff;
+            --role-active-text: #4f46e5;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --surface: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --ring: rgba(79, 70, 229, 0.4);
+            --input-bg: #0f172a;
+            --role-active-bg: #4f46e5;
+            --role-active-text: #ffffff;
         }
 
         * {
@@ -23,6 +39,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
         }
 
         body {
@@ -44,9 +61,46 @@
             width: 100%;
             max-width: 1000px;
             min-height: 600px;
-            border-radius: 20px;
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--border);
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--primary);
+            color: white;
         }
 
         /* Left Side: Branding / Info */
@@ -54,7 +108,7 @@
             flex: 1.2;
             background: linear-gradient(135deg, var(--primary), #312e81);
             color: white;
-            padding: 50px;
+            padding: 60px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -69,30 +123,31 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
             pointer-events: none;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
+            gap: 16px;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
             z-index: 1;
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary);
-            font-size: 1.5rem;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
 
         .brand-content {
@@ -101,44 +156,45 @@
         }
 
         .brand-content h1 {
-            font-size: 2.5rem;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            font-weight: 600;
+            font-size: 2.8rem;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            font-weight: 700;
         }
 
         .brand-content p {
             font-size: 1.1rem;
             line-height: 1.6;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 40px;
         }
 
         .feature-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px;
         }
 
         .feature-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 1.05rem;
-            color: rgba(255, 255, 255, 0.9);
+            gap: 14px;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.95);
         }
 
         .feature-icon {
             background: rgba(255, 255, 255, 0.2);
-            padding: 5px;
-            border-radius: 50%;
+            padding: 8px;
+            border-radius: 10px;
             display: flex;
+            backdrop-filter: blur(4px);
         }
 
-        .feature-icon svg {
-            width: 16px;
-            height: 16px;
+        .feature-icon i {
+            width: 20px;
+            height: 20px;
         }
 
         .brand-footer {
@@ -151,81 +207,113 @@
         /* Right Side: Form */
         .form-panel {
             flex: 1;
-            padding: 50px;
+            padding: 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            background: white;
+            background: var(--surface);
+            position: relative;
         }
 
         .form-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            animation: slideUp 0.8s ease-out 0.2s both;
         }
 
         .form-header h2 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             color: var(--text-main);
-            margin-bottom: 8px;
-            font-weight: 600;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .form-header p {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         /* Role Selector */
         .role-selector {
             display: flex;
             background: var(--bg-color);
-            padding: 5px;
-            border-radius: 12px;
+            padding: 6px;
+            border-radius: 16px;
             margin-bottom: 30px;
             border: 1px solid var(--border);
+            animation: slideUp 1s ease-out 0.3s both;
         }
 
         .role-btn {
             flex: 1;
-            padding: 10px 0;
+            padding: 12px 0;
             text-align: center;
             border: none;
             background: transparent;
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.95rem;
+            font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .role-btn.active {
-            background: white;
+            background: var(--role-active-bg);
+            color: var(--role-active-text);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+        
+        .role-btn:not(.active):hover {
+            background: rgba(79, 70, 229, 0.05);
             color: var(--primary);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .form-content {
+            animation: slideUp 1s ease-out 0.4s both;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             position: relative;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
             color: var(--text-main);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            color: var(--text-muted);
+            width: 18px;
+            height: 18px;
+            transition: color 0.3s;
         }
 
         .input-group input {
             width: 100%;
-            padding: 14px 16px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
+            padding: 14px 16px 14px 48px;
+            border: 2px solid var(--border);
+            border-radius: 14px;
             font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #fcfcfc;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--input-bg);
             color: var(--text-main);
         }
 
@@ -233,7 +321,11 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px var(--ring);
-            background: white;
+            background: var(--surface);
+        }
+        
+        .input-group input:focus + i {
+            color: var(--primary);
         }
 
         .form-options {
@@ -327,35 +419,36 @@
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()"><i data-lucide="sun"></i></button>
 
     <div class="login-wrapper">
         <!-- Left Brand Panel -->
         <div class="brand-panel">
             <div class="logo-container">
-                <div class="logo-icon">T</div>
-                Thozri
+                <div class="logo-icon">A</div>
+                Aura
             </div>
             
             <div class="brand-content">
                 <h1>Elevate Your Space with Premium Services.</h1>
-                <p>Welcome to Thozri, your ultimate platform for reliable, top-tier home and corporate services. We bring the experts to your doorstep.</p>
+                <p>Welcome to Aura, your ultimate platform for reliable, top-tier home and corporate services. We bring the experts to your doorstep.</p>
                 
                 <ul class="feature-list">
                     <li class="feature-item">
                         <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <i data-lucide="check-circle"></i>
                         </div>
                         Verified Professionals
                     </li>
                     <li class="feature-item">
                         <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <i data-lucide="shield-check"></i>
                         </div>
                         Secure & Transparent Booking
                     </li>
                     <li class="feature-item">
                         <div class="feature-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <i data-lucide="headphones"></i>
                         </div>
                         24/7 Premium Support
                     </li>
@@ -363,7 +456,7 @@
             </div>
             
             <div class="brand-footer">
-                &copy; 2024 Thozri Inc. All rights reserved.
+                &copy; 2026 Aura Inc. All rights reserved.
             </div>
         </div>
 
@@ -376,42 +469,77 @@
 
             <!-- Role Selector -->
             <div class="role-selector">
-                <button type="button" class="role-btn active" onclick="setRole('Customer', this)">Customer</button>
-                <button type="button" class="role-btn" onclick="setRole('Provider', this)">Provider</button>
-                <button type="button" class="role-btn" onclick="setRole('Admin', this)">Admin</button>
+                <button type="button" class="role-btn active" onclick="setRole('Customer', this)"><i data-lucide="user"></i> Customer</button>
+                <button type="button" class="role-btn" onclick="setRole('Provider', this)"><i data-lucide="briefcase"></i> Provider</button>
+                <button type="button" class="role-btn" onclick="setRole('Admin', this)"><i data-lucide="shield"></i> Admin</button>
             </div>
 
-            <form onsubmit="handleLogin(event)">
+            <form class="form-content" onsubmit="handleLogin(event)">
                 <!-- Hidden input to store selected role -->
                 <input type="hidden" id="loginType" name="loginType" value="Customer">
 
                 <div class="input-group">
                     <label for="email">Email Address or Phone</label>
-                    <input type="text" id="email" placeholder="Enter your credentials" required>
+                    <div class="input-wrapper">
+                        <i data-lucide="mail" style="position: absolute; left: 16px; color: var(--text-muted); width: 18px;"></i>
+                        <input type="text" id="email" placeholder="Enter your credentials" required style="padding-left: 48px;">
+                    </div>
                 </div>
                 
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <div class="input-wrapper">
+                        <i data-lucide="lock" style="position: absolute; left: 16px; color: var(--text-muted); width: 18px;"></i>
+                        <input type="password" id="password" placeholder="••••••••" required style="padding-left: 48px;">
+                    </div>
                 </div>
 
                 <div class="form-options">
                     <label class="remember-me">
                         <input type="checkbox"> Remember me
                     </label>
-                    <a href="#" class="forgot-pass">Forgot password?</a>
+                    <a href="#" class="forgot-pass" onclick="alert('Password reset link will be sent to your email.')">Forgot password?</a>
                 </div>
 
-                <button type="submit" class="btn-submit" id="submitBtn">Sign In as Customer</button>
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    Sign In as Customer <i data-lucide="arrow-right"></i>
+                </button>
             </form>
 
             <div class="signup-link">
-                Don't have an account? <a href="#">Create an account</a>
+                Don't have an account? <a href="#" onclick="alert('Sign up feature is currently under maintenance.')">Create an account</a>
             </div>
         </div>
     </div>
 
     <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Theme initialization
+        const themeToggleBtn = document.getElementById('themeToggle');
+        
+        function initTheme() {
+            const savedTheme = localStorage.getItem('aura-theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                updateThemeIcon(true);
+            }
+        }
+        initTheme();
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('aura-theme', isDark ? 'dark' : 'light');
+            updateThemeIcon(isDark);
+        }
+
+        function updateThemeIcon(isDark) {
+            themeToggleBtn.innerHTML = isDark ? '<i data-lucide="moon"></i>' : '<i data-lucide="sun"></i>';
+            lucide.createIcons();
+        }
+
         function setRole(role, element) {
             // Update active state on buttons
             const buttons = document.querySelectorAll('.role-btn');
@@ -423,7 +551,13 @@
 
             // Update UI text dynamically
             document.getElementById('portal-desc').innerText = `Sign in to the ${role} Portal`;
-            document.getElementById('submitBtn').innerText = `Sign In as ${role}`;
+            
+            let iconName = 'arrow-right';
+            if(role === 'Provider') iconName = 'zap';
+            else if(role === 'Admin') iconName = 'shield-check';
+            
+            document.getElementById('submitBtn').innerHTML = `Sign In as ${role} <i data-lucide="${iconName}"></i>`;
+            lucide.createIcons();
         }
 
         function handleLogin(event) {
