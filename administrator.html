@@ -3,34 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrator Dashboard - Thozri</title>
+    <title>Administrator Dashboard - Aura</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --primary: #10b981;
             --primary-dark: #059669;
-            --bg-color: #f1f5f9;
+            --accent: #6366f1;
+            --bg-color: #f8fafc;
             --surface: #ffffff;
             --text-main: #0f172a;
             --text-muted: #475569;
             --border: #e2e8f0;
             --sidebar-bg: #0f172a;
             --sidebar-text: #94a3b8;
+            --input-bg: #ffffff;
+            --hover-bg: rgba(255,255,255,0.1);
+            --glass: rgba(255, 255, 255, 0.75);
+            --gradient-primary: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            --gradient-accent: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); display: flex; min-height: 100vh; overflow-x: hidden; }
+        
+        body.dark-mode {
+            --bg-color: #020617;
+            --surface: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+            --sidebar-bg: #000000;
+            --input-bg: #020617;
+            --hover-bg: rgba(255,255,255,0.05);
+            --glass: rgba(15, 23, 42, 0.75);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s; scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
         
         /* Sidebar */
         .sidebar {
             width: 260px; background: var(--sidebar-bg); color: white;
-            padding: 30px 20px; display: flex; flex-direction: column; transition: transform 0.3s ease;
-            position: fixed; height: 100vh; z-index: 100; box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+            padding: 30px 20px; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: fixed; height: 100vh; z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(15px); background: var(--glass);
         }
-        .logo { font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
-        .logo-icon { width: 32px; height: 32px; background: var(--primary); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .sidebar::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--gradient-primary);
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; letter-spacing: -1px; }
+        .logo-icon { width: 34px; height: 34px; background: var(--primary); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
         .nav-links { list-style: none; display: flex; flex-direction: column; gap: 5px; }
         .nav-link { padding: 12px 16px; border-radius: 8px; color: var(--sidebar-text); cursor: pointer; transition: all 0.3s; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 500; }
-        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.1); color: white; }
+        .nav-link:hover, .nav-link.active { background: var(--hover-bg); color: white; }
         
         /* Main Layout */
         .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; transition: margin 0.3s ease; width: calc(100% - 260px); }
@@ -44,7 +74,7 @@
         .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text-main); }
         .user-actions { display: flex; align-items: center; gap: 20px; }
         .user-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 5px 10px; border-radius: 30px; transition: background 0.2s; }
-        .user-profile:hover { background: #f1f5f9; }
+        .user-profile:hover { background: var(--border); }
         .avatar { width: 36px; height: 36px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--primary); }
         
         .main-content { padding: 40px; flex: 1; }
@@ -82,15 +112,35 @@
         .toggle-switch.active { background: var(--primary); }
         .toggle-switch.active::after { left: 23px; }
 
-        .btn { border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; display: inline-flex; align-items: center; justify-content: center; }
-        .btn-success { background: var(--primary); color: white; }
-        .btn-success:hover { background: var(--primary-dark); }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-danger:hover { background: #dc2626; }
+        .btn { background: var(--gradient-primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); font-size: 0.95rem; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 12px -3px rgba(16, 185, 129, 0.2); position: relative; overflow: hidden; gap: 8px; }
+        .btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,0.2), transparent); opacity: 0; transition: 0.3s; }
+        .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 20px -5px rgba(16, 185, 129, 0.3); }
+        .btn:hover::after { opacity: 1; }
+        .btn:active { transform: translateY(0) scale(0.98); }
+        
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); box-shadow: none; font-weight: 700; padding: 12px 24px; border-radius: 12px; transition: all 0.3s; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-outline:hover { background: var(--hover-bg); border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+
+        /* Reveal Animation */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Animated Mesh Background */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+            z-index: -1; pointer-events: none;
+            animation: pulseBg 10s infinite alternate ease-in-out;
+        }
+        @keyframes pulseBg {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.1); opacity: 0.9; }
+        }
         
         /* Toast */
         .toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: white; border-left: 4px solid var(--primary); padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateX(120%); opacity: 0; transition: all 0.3s; min-width: 250px; }
+        .toast { background: var(--toast-bg); border-left: 4px solid var(--primary); padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateX(120%); opacity: 0; transition: all 0.3s; min-width: 250px; }
         .toast.show { transform: translateX(0); opacity: 1; }
         .toast-icon { color: var(--primary); font-size: 1.2rem; }
         .toast-content h4 { font-size: 0.95rem; color: var(--text-main); margin-bottom: 2px; }
@@ -108,27 +158,45 @@
             .metrics-grid { grid-template-columns: 1fr; }
             .page-header { flex-direction: column; align-items: flex-start; gap: 15px; }
         }
+        
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .main-content {
+            animation: pageFadeIn 0.4s ease-out;
+        }
+        .theme-btn {
+            background: none; border: none; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-main);
+        }
     </style>
 </head>
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="sidebar" id="sidebar">
-        <div class="logo"><div class="logo-icon">T</div> Thozri Admin</div>
+        <div class="logo">
+            <div class="logo-icon"><i data-lucide="shield-check"></i></div>
+            Aura Admin
+        </div>
         <ul class="nav-links">
-            <li><a href="#" class="nav-link active"><span>⚡</span> Control Center</a></li>
-            <li><a href="#" class="nav-link"><span>👥</span> User Management</a></li>
-            <li><a href="#" class="nav-link"><span>📂</span> Service Categories</a></li>
-            <li><a href="#" class="nav-link"><span>📜</span> Platform Logs</a></li>
-            <li style="margin-top: auto;"><a href="index.html" class="nav-link" style="color: #ef4444;"><span>🔒</span> Secure Logout</a></li>
+            <li><a href="#" class="nav-link active" data-view="controlCenter"><i data-lucide="layout-grid"></i> Control Center</a></li>
+            <li><a href="#" class="nav-link" data-view="userMgmt"><i data-lucide="users"></i> User Management</a></li>
+            <li><a href="#" class="nav-link" data-view="categories"><i data-lucide="layers"></i> Service Categories</a></li>
+            <li><a href="#" class="nav-link" data-view="logs"><i data-lucide="file-text"></i> Platform Logs</a></li>
+            <li><a href="#" class="nav-link" data-view="profile"><i data-lucide="user"></i> Admin Profile</a></li>
+            <li style="margin-top: auto;"><a href="index.html" class="nav-link" style="color: #ef4444;"><i data-lucide="lock"></i> Secure Logout</a></li>
         </ul>
     </div>
     
     <div class="main-wrapper">
         <header class="topbar">
-            <div class="menu-toggle" id="menuToggle">☰</div>
+            <div class="menu-toggle" id="menuToggle"><i data-lucide="menu"></i></div>
             <div style="flex: 1;"></div>
             <div class="user-actions">
+                <button class="theme-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle Dark Mode" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-main); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; transition: 0.3s; border: 1px solid var(--border);">
+                    <i data-lucide="sun"></i>
+                </button>
                 <div class="user-profile">
                     <div class="avatar">SA</div>
                     <div style="font-size: 0.9rem; font-weight: 500; color: var(--text-main);" class="hide-mobile">System Admin</div>
@@ -136,31 +204,31 @@
             </div>
         </header>
 
-        <div class="main-content">
-            <div class="page-header">
+        <div class="main-content" id="controlCenterView">
+            <div class="page-header reveal">
                 <div>
                     <h1>Admin Control Center</h1>
                     <p>Platform overview, service configurations, and actionable metrics.</p>
                 </div>
-                <button class="btn btn-success" style="padding: 10px 20px; font-size: 0.95rem;" onclick="showToast('System synced successfully!')">↻ Sync Data</button>
+                <button class="btn" style="padding: 10px 20px; font-size: 0.95rem; gap: 8px;" onclick="showToast('System synced successfully!')"><i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i> Sync Data</button>
             </div>
 
             <!-- Platform Metrics -->
-            <div class="metrics-grid">
+            <div class="metrics-grid reveal">
                 <div class="metric-card">
-                    <div class="metric-title"><span>Total Providers</span> <span style="font-size: 1.2rem;">👥</span></div>
+                    <div class="metric-title"><span>Total Providers</span> <i data-lucide="users" style="width: 20px; height: 20px; color: var(--primary);"></i></div>
                     <div class="metric-value">1,248</div>
-                    <div class="metric-trend">↑ 12% from last month</div>
+                    <div class="metric-trend"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> 12% from last month</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-title"><span>Active Bookings</span> <span style="font-size: 1.2rem;">📅</span></div>
+                    <div class="metric-title"><span>Active Bookings</span> <i data-lucide="calendar" style="width: 20px; height: 20px; color: var(--primary);"></i></div>
                     <div class="metric-value">432</div>
-                    <div class="metric-trend">↑ 5% from yesterday</div>
+                    <div class="metric-trend"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> 5% from yesterday</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-title"><span>Platform Revenue</span> <span style="font-size: 1.2rem;">💵</span></div>
+                    <div class="metric-title"><span>Platform Revenue</span> <i data-lucide="banknote" style="width: 20px; height: 20px; color: var(--primary);"></i></div>
                     <div class="metric-value">$84,500</div>
-                    <div class="metric-trend">↑ 22% from last month</div>
+                    <div class="metric-trend"><i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> 22% from last month</div>
                 </div>
             </div>
 
@@ -222,12 +290,230 @@
                 </div>
             </div>
         </div>
+
+        <!-- User Management View -->
+        <div class="main-content" id="userMgmtView" style="display:none;">
+            <div class="page-header reveal">
+                <div>
+                    <h1>User Management</h1>
+                    <p>Manage customers, providers, and their access levels.</p>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" placeholder="Search users..." style="padding:10px 15px; border-radius:8px; border:1px solid var(--border); width:250px;">
+                    <button class="btn btn-success" style="padding: 10px 20px;">Search</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div style="display:flex; gap:15px; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:20px;">
+                    <div style="font-weight:600; color:var(--primary); border-bottom:2px solid var(--primary); padding-bottom:15px; margin-bottom:-16px; cursor:pointer;">Providers</div>
+                    <div style="font-weight:500; color:var(--text-muted); cursor:pointer;">Customers</div>
+                    <div style="font-weight:500; color:var(--text-muted); cursor:pointer;">Suspended</div>
+                </div>
+                
+                <div class="data-list">
+                    <div class="data-item">
+                        <div class="data-info" style="display:flex; align-items:center; gap:15px;">
+                            <div class="avatar" style="background:#fce7f3; color:#db2777;">EP</div>
+                            <div>
+                                <strong>Elite Plumbers</strong>
+                                <span>provider@eliteplumbers.com • Joined 1 year ago</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn" style="background:#e2e8f0; color:var(--text-main);" onclick="showToast('Viewing Elite Plumbers...')">View</button>
+                            <button class="btn btn-outline" onclick="showToast('User suspended')">Suspend</button>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-info" style="display:flex; align-items:center; gap:15px;">
+                            <div class="avatar" style="background:#e0f2fe; color:#0369a1;">CP</div>
+                            <div>
+                                <strong>CleanPros Services</strong>
+                                <span>clean@pros.com • Joined 6 months ago</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn" style="background:#e2e8f0; color:var(--text-main);" onclick="showToast('Viewing CleanPros...')">View</button>
+                            <button class="btn btn-outline" onclick="showToast('User suspended')">Suspend</button>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-info" style="display:flex; align-items:center; gap:15px;">
+                            <div class="avatar" style="background:#f0fdf4; color:#15803d;">GC</div>
+                            <div>
+                                <strong>Green Care Landscaping</strong>
+                                <span>hello@greencare.com • Joined 2 weeks ago</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn" style="background:#e2e8f0; color:var(--text-main);" onclick="showToast('Viewing Green Care...')">View</button>
+                            <button class="btn btn-outline" onclick="showToast('User suspended')">Suspend</button>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div class="data-info" style="display:flex; align-items:center; gap:15px;">
+                            <div class="avatar" style="background:#fff7ed; color:#c2410c;">QF</div>
+                            <div>
+                                <strong>Quick Fix Handyman</strong>
+                                <span>qfix@handy.io • Joined 3 months ago</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn" style="background:#e2e8f0; color:var(--text-main);" onclick="showToast('Viewing Quick Fix...')">View</button>
+                            <button class="btn btn-outline" onclick="showToast('User suspended')">Suspend</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Categories View -->
+        <div class="main-content" id="categoriesView" style="display:none;">
+            <div class="page-header">
+                <div>
+                    <h1>Service Categories</h1>
+                    <p>Add, edit, or remove service types available on Aura.</p>
+                </div>
+                <button class="btn btn-success" style="padding: 10px 20px;" onclick="showToast('Drafting new category...')">+ Add Category</button>
+            </div>
+            
+            <div class="grid-layout">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Active Categories</h3>
+                    </div>
+                    <div class="data-list">
+                        <div class="data-item">
+                            <div class="data-info">
+                                <strong><i data-lucide="sparkles" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Home Cleaning</strong>
+                                <span>142 Active Providers</span>
+                            </div>
+                            <button class="btn" style="background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border);">Edit Details</button>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-info">
+                                <strong><i data-lucide="droplets" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 5px;"></i> Plumbing Repair</strong>
+                                <span>89 Active Providers</span>
+                            </div>
+                            <button class="btn" style="background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border);">Edit Details</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Category Settings</h3>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div>
+                            <label style="display:block; margin-bottom:5px; font-weight:600; font-size:0.9rem;">Default Platform Fee (%)</label>
+                            <input type="number" value="15" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:8px; background:var(--input-bg); color:var(--text-main);">
+                        </div>
+                        <button class="btn btn-success" onclick="showToast('Fees updated successfully')">Save System Rates</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Platform Logs View -->
+        <div class="main-content" id="logsView" style="display:none;">
+            <div class="page-header">
+                <div>
+                    <h1>Platform Logs</h1>
+                    <p>Audit system events, errors, and access records.</p>
+                </div>
+                <button class="btn" style="background:#e2e8f0; color:var(--text-main); padding: 10px 20px;">↓ Export CSV</button>
+            </div>
+            
+            <div class="card">
+                <table style="width:100%; text-align:left; border-collapse:collapse;">
+                    <thead>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <th style="padding:15px 10px; color:var(--text-muted); font-size:0.9rem;">Timestamp</th>
+                            <th style="padding:15px 10px; color:var(--text-muted); font-size:0.9rem;">Event Type</th>
+                            <th style="padding:15px 10px; color:var(--text-muted); font-size:0.9rem;">User/IP</th>
+                            <th style="padding:15px 10px; color:var(--text-muted); font-size:0.9rem;">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size:0.9rem;">
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:15px 10px;">Oct 12, 14:05:11</td>
+                            <td style="padding:15px 10px;"><span style="color:var(--primary); font-weight:600;">LOGIN_SUCCESS</span></td>
+                            <td style="padding:15px 10px;">provider@elite...</td>
+                            <td style="padding:15px 10px; color:var(--text-muted);">Secure login via dashboard</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:15px 10px;">Oct 12, 13:42:01</td>
+                            <td style="padding:15px 10px;"><span style="color:#ef4444; font-weight:600;">PAYMENT_FAILED</span></td>
+                            <td style="padding:15px 10px;">SYSTEM</td>
+                            <td style="padding:15px 10px; color:var(--text-muted);">Stripe API timeout on #8493</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Profile View -->
+        <div class="main-content" id="profileView" style="display:none;">
+            <div class="page-header reveal">
+                <h1>Admin Profile <i data-lucide="settings"></i></h1>
+                <p>Manage system administrator settings and credentials.</p>
+            </div>
+            
+            <div class="card reveal" style="max-width:600px;">
+                <div style="display:flex; align-items:center; gap:20px; margin-bottom:30px;">
+                    <div class="avatar" style="width:80px; height:80px; font-size:2rem; background: var(--gradient-primary); color: white; border: none;">SA</div>
+                    <div>
+                        <button class="btn btn-outline" style="width:auto; padding:10px 20px; margin-bottom:5px;">Update Avatar</button>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">System Administrator Role</div>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-main);">Admin Name</label>
+                    <input type="text" class="form-control" value="System Administrator" style="width:100%; padding:14px; border:2px solid var(--border); border-radius:12px; background:var(--input-bg); color:var(--text-main); font-size: 1rem; outline: none;">
+                </div>
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-main);">Admin Email</label>
+                    <input type="email" class="form-control" value="admin@aura.platform" style="width:100%; padding:14px; border:2px solid var(--border); border-radius:12px; background:var(--input-bg); color:var(--text-main); font-size: 1rem; outline: none;">
+                </div>
+                
+                <button class="btn" onclick="showToast('Admin Profile Updated')">Save Changes</button>
+            </div>
+        </div>
     </div>
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
+        // Theme logic
+        const themeToggleBtn = document.getElementById('themeToggle');
+        function initTheme() {
+            const savedTheme = localStorage.getItem('aura-theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            updateThemeIcon();
+        }
+        initTheme();
+
+        function updateThemeIcon() {
+            const isDark = document.body.classList.contains('dark-mode');
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.innerHTML = isDark ? '<i data-lucide="moon"></i>' : '<i data-lucide="sun"></i>';
+                lucide.createIcons();
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('aura-theme', isDark ? 'dark' : 'light');
+            updateThemeIcon();
+        }
+
         // Sidebar Toggle
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
@@ -240,6 +526,37 @@
         menuToggle.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
 
+        // Sidebar Navigation Logic
+        const navLinks = document.querySelectorAll('.nav-link[data-view]');
+        const views = {
+            'controlCenter': document.getElementById('controlCenterView'),
+            'userMgmt': document.getElementById('userMgmtView'),
+            'categories': document.getElementById('categoriesView'),
+            'logs': document.getElementById('logsView'),
+            'profile': document.getElementById('profileView')
+        };
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetView = link.dataset.view;
+                
+                // Update active link state
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Hide all views, show targeted
+                Object.values(views).forEach(v => { if(v) v.style.display = 'none'; });
+                if (views[targetView]) views[targetView].style.display = 'block';
+                
+                // Close mobile sidebar if open
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
         // Toast System
         function showToast(title) {
             const container = document.getElementById('toastContainer');
@@ -247,12 +564,13 @@
             toast.className = 'toast';
             
             toast.innerHTML = `
-                <div class="toast-icon">✓</div>
+                <div class="toast-icon"><i data-lucide="check-circle"></i></div>
                 <div class="toast-content">
                     <h4>${title}</h4>
                 </div>
             `;
             container.appendChild(toast);
+            lucide.createIcons();
             
             setTimeout(() => toast.classList.add('show'), 10);
             setTimeout(() => {
@@ -276,9 +594,10 @@
         function checkEmptyActions() {
             const list = document.getElementById('actionList');
             if(list.children.length === 0) {
-                list.innerHTML = `<div style="text-align: center; padding: 40px 20px; color: var(--text-muted); background: #f8fafc; border-radius: 12px;">
-                    <span style="font-size: 2rem; display: block; margin-bottom: 10px;">✨</span>
+                list.innerHTML = `<div style="text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--bg-color); border-radius: 12px; border: 1px dashed var(--border); animation: fadeIn 0.5s ease-out;">
+                    <div style="font-size: 2rem; display: block; margin-bottom: 10px; color: var(--primary);"><i data-lucide="sparkles" style="width: 48px; height: 48px; margin: 0 auto;"></i></div>
                     All caught up! No pending actions in the queue.</div>`;
+                lucide.createIcons();
             }
         }
 
@@ -305,6 +624,17 @@
 
             showToast(`${serviceName} is now ${statusText}`);
         }
+
+        // Reveal on scroll
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { 
+                if (entry.isIntersecting) entry.target.classList.add('active'); 
+            });
+        }, observerOptions);
+
+        function initReveal() { document.querySelectorAll('.reveal').forEach(el => observer.observe(el)); }
+        window.addEventListener('load', initReveal);
     </script>
 </body>
 </html>
